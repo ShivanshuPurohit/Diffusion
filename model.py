@@ -65,3 +65,26 @@ class ConditionedSequential(Module):
         for layer in self.layers:
             x = layer(x, *args, **kwargs)
         return x
+
+    
+class ResidualBlock(Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.condition = ConditionalNHWC(out_channels) if out_channels % 2 == 0 else None
+        self.layers = ModuleList([
+            Conv2d(in_channels, out_channels, (1, 1)),
+            Conv2d(out_channels, out_channels, (3, 3), padding=1),
+            Conv2d(out_channels, out_channels, (3, 13), padding=1),
+        ])
+        self.norm = LayerNorm(1, out_channels)
+    
+    def forward(self, x, condition):
+        for i, layer in enumerate(self.layers):
+            if i == 0:
+                x = layer(x)
+            else:
+                if self.condition:
+                    x += layer(self.condition(F.gelu(self.norm(x), condition)))
+                else:
+                    x += layer(F.gelu(self.norm(x)))
+        return x
