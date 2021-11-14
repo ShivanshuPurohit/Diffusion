@@ -88,3 +88,18 @@ class ResidualBlock(Module):
                 else:
                     x += layer(F.gelu(self.norm(x)))
         return x
+
+    
+class BottleneckBlock(Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.condition = ConditionalNHWC(channels)
+        self.layers = ModuleList([SelfAttention(channels//8, 8) for _ in range(4)])
+        self.norm = LayerNorm(channels)
+    
+    def forward(self, x, condition):
+        x = rearrange(x, "b c h w -> b h w c")
+        for layer in self.layers:
+            x += layer(self.condition(self.norm(x), condition))
+        x = rearrange(x, "b h w c -> b c h w")
+        return x
