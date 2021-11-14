@@ -55,3 +55,13 @@ class SelfAttention(Module):
         x = rearrange(x, "b (h w) d -> b h w d", h=h, w=w)
         return x
 
+
+class ConditionedSequential(Module):
+    def __init__(self, *layers):
+        super().__init__()
+        self.layers = ModuleList(layers)
+    
+    def forward(self, x, *args, **kwargs):
+        for layer in self.layers:
+            x = layer(x, *args, **kwargs)
+        return x
