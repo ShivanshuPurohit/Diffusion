@@ -7,9 +7,7 @@ from torch import einsum
 
 
 def beta_schedule(timesteps):
-    """
-    Returns a beta schedule for the diffusion model.
-    """
+    #Returns a beta schedule for the diffusion model.
     return 1.0 - np.exp(-0.1 * timesteps)
 
 
