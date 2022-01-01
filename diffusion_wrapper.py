@@ -5,6 +5,12 @@ import numpy as np
 
 from torch import einsum
 
+def from_pil_image(x):
+    """Converts from a PIL image to a tensor."""
+    x = TF.to_tensor(x)
+    if x.ndim == 2:
+        x = x[..., None]
+    return x * 2 - 1
 
 def beta_schedule(timesteps):
     #Returns a beta schedule for the diffusion model.
