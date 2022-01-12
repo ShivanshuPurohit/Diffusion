@@ -38,7 +38,7 @@ def conv_nd(dims, *args, **kwargs):
         return nn.Conv3d(*args, **kwargs)
     raise ValueError(f"unsupported dimensions: {dims}")
     
-ef timestep_embedding(timesteps, dim, max_period=10000):
+def timestep_embedding(timesteps, dim, max_period=10000):
     """
     Create sinusoidal timestep embeddings.
     :param timesteps: a 1-D Tensor of N indices, one per batch element.
